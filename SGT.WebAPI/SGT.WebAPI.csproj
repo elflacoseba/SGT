@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SGT.Application\SGT.Application.csproj" />
     <ProjectReference Include="..\SGT.Domain\SGT.Domain.csproj" />
     <ProjectReference Include="..\SGT.Infrastructure\SGT.Infrastructure.csproj" />
