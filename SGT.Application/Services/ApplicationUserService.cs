@@ -4,6 +4,9 @@ using SGT.Domain.Entities;
 using SGT.Infrastructure.Persistence.Interfaces;
 using SGT.Application.Dtos.Request;
 using SGT.Application.Dtos.Response;
+using FluentValidation;
+using SGT.Application.Validators;
+using System.Runtime.CompilerServices;
 
 namespace SGT.Application.Services
 {
@@ -11,11 +14,13 @@ namespace SGT.Application.Services
     {
         private readonly IApplicationUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly ApplicationUserRequestDtoValidator _applicationUserRequestDtoValidationRules;
 
-        public ApplicationUserService(IApplicationUserRepository userRepository, IMapper mapper)
+        public ApplicationUserService(IApplicationUserRepository userRepository, IMapper mapper, ApplicationUserRequestDtoValidator applicationUserRequestDtoValidationRules)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _applicationUserRequestDtoValidationRules = applicationUserRequestDtoValidationRules;
         }
 
         #region
@@ -44,6 +49,18 @@ namespace SGT.Application.Services
 
         public async Task<bool> CreateUserAsync(CreateApplicationUserRequestDto user)
         {
+     
+            var validationResult = await _applicationUserRequestDtoValidationRules.ValidateAsync(user);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                                             .Select(error => new Exceptions.ErrorValidation(error.PropertyName, error.ErrorMessage))
+                                             .ToList();
+
+                throw new Exceptions.ValidationException(errors);
+            }
+
             var userEnity = _mapper.Map<ApplicationUser>(user);
 
             return await _userRepository.CreateUserAsync(userEnity, user.Password!);
@@ -57,6 +74,7 @@ namespace SGT.Application.Services
 
             return await _userRepository.UpdateUserAsync(userEntity!);
         }
+
         public async Task<bool> DeleteUserAsync(string userId)
         {
             return await _userRepository.DeleteUserAsync(userId);

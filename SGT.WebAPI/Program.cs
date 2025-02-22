@@ -1,5 +1,6 @@
 using SGT.Application.Extensions;
 using SGT.Infrastructure.Extensions;
+using SGT.WebAPI.Middlewares;
 
 namespace SGT.WebAPI
 {
@@ -30,6 +31,8 @@ namespace SGT.WebAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
 

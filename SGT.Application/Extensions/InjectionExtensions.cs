@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SGT.Application.Interfaces;
 using System.Reflection;
 using SGT.Application.Services;
+using FluentValidation;
 
 namespace SGT.Application.Extensions
 {
@@ -13,6 +14,7 @@ namespace SGT.Application.Extensions
             services.AddSingleton(configuration);
             
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddScoped<IApplicationUserApplication, ApplicationUserService>();
             services.AddScoped<IApplicationRoleApplication, ApplicationRoleService>();
